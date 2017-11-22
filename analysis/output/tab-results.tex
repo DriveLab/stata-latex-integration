@@ -1,0 +1,17 @@
+\begin{table}[h]\centering \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi} \caption{Average treatment effect} \label{tab:results} \maxsizebox*{\textwidth}{\textheight}{ \begin{threeparttable} \begin{tabular}{lcc} \toprule
+                    &\multicolumn{1}{c}{(1)}         &\multicolumn{1}{c}{(2)}         \\
+\hline
+Intervention        &       7.376\sym{*}  &       8.401\sym{*}  \\
+                    &      (2.09)         &      (2.41)         \\
+[1em]
+Registered voters   &                     &      0.0577\sym{***}\\
+                    &                     &     (15.08)         \\
+[1em]
+Constant            &       392.6\sym{***}&       337.6\sym{***}\\
+                    &     (42.87)         &     (34.76)         \\
+[1em]
+Town fixed-effects  &         Yes         &         Yes         \\
+\hline
+Mean turnout untreated&       461.3         &       461.3         \\
+Observations        &        6970         &        6948         \\
+\bottomrule \end{tabular} \begin{tablenotes}[flushleft] \footnotesize \item The columns present results from regressing total turnout on an intervention dummy and different sets of control variables. The coefficient on the intervention variable is an estimate of the average treatment effect. Values in parenteses are t statistics. * denotes significance at 10 pct., ** at 5 pct., and *** at 1 pct. level. \end{tablenotes} \end{threeparttable} } \end{table}

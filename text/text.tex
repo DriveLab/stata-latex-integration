@@ -1,0 +1,81 @@
+\documentclass[11pt]{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage{FabPackages4}
+\bibliography{bibliography}
+
+% Custom commands
+\captionsetup{labelfont=bf, font=bf}
+\newcommand{\note}[1]{\vspace{10mm}\caption*{\small #1}}
+
+
+\title{\textbf{Stata-Latex Integration} \\ -- A simple example -- }
+\author{Fabian Gunzinger}
+\date{\today}
+
+
+
+\begin{document}
+
+\maketitle
+
+
+% ===========================================================================
+\section{Introduction}
+% ===========================================================================
+
+Some text here. Let's cite \citet{acemoglu2001colonial} and \citet{kahneman1979prospect} to look a bit more credible.
+
+
+
+% ===========================================================================
+\section{Data}
+% ===========================================================================
+
+Where you explain what data you use and document how you cleaned it and constructed variables.
+
+
+
+% ===========================================================================
+\section{Results}
+% ===========================================================================
+
+Table \ref{tab:results} shows something you can explain here...
+
+Figure \ref{fig:bars} shows something. 
+
+
+\input{../analysis/output/tab-results.tex}
+
+
+\begin{figure}[h]\centering
+\caption{Catchy title comes here
+\label{fig:bars}}
+\includegraphics[width=.49\textwidth]{../analysis/output/fig-bars.pdf}
+\captionsetup{belowskip=-30pt, font=normalfont, width=.5\textwidth}
+\note{\footnotesize Illuminating footnote explaining what's going on in the figure comes here (though the figure really shouldn't need that much explanation).}
+\end{figure}
+
+
+
+
+% ===========================================================================
+\section{Appendix}
+% ===========================================================================
+
+The histograms in Figure \ref{fig:histograms} show some more things.
+
+
+\begin{figure}[H]\centering
+\caption{Distributions of registered voters and turnout
+\label{fig:histograms}}
+\includegraphics[width=.32\textwidth]{../analysis/output/fig-hist-total.pdf}
+\includegraphics[width=.32\textwidth]{../analysis/output/fig-hist-female.pdf}
+\includegraphics[width=.32\textwidth]{../analysis/output/fig-hist-male.pdf}
+\captionsetup{belowskip=-10pt, font=normalfont, width=.94\textwidth}
+\end{figure}
+
+
+\newpage
+\printbibliography
+
+\end{document}

@@ -1,0 +1,17 @@
+[0] Config.pm:354> INFO - This is Biber 2.7
+[1] Config.pm:357> INFO - Logfile is 'text.blg'
+[64] biber-darwin:303> INFO - === Mon Oct  9, 2017, 14:06:48
+[92] Biber.pm:359> INFO - Reading 'text.bcf'
+[212] Biber.pm:835> INFO - Found 2 citekeys in bib section 0
+[227] Biber.pm:3670> INFO - Processing section 0
+[243] Biber.pm:3840> INFO - Looking for bibtex format file 'bibliography.bib' for section 0
+[253] bibtex.pm:1435> INFO - Decoding LaTeX character macros into UTF-8
+[258] bibtex.pm:1292> INFO - Found BibTeX data source 'bibliography.bib'
+[261] Utils.pm:164> WARN - month field 'December' in entry 'acemoglu2001colonial' is not an integer - this will probably not sort properly.
+[286] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'variable = shifted' with 'variable = non-ignorable'
+[286] UCollate.pm:68> INFO - Overriding locale 'en-US' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[286] Biber.pm:3499> INFO - Sorting list 'nyt/global/' of type 'entry' with scheme 'nyt' and locale 'en-US'
+[286] Biber.pm:3505> INFO - No sort tailoring available for locale 'en-US'
+[290] bbl.pm:608> INFO - Writing 'text.bbl' with encoding 'ansinew'
+[291] bbl.pm:712> INFO - Output to text.bbl
+[291] Biber.pm:109> INFO - WARNINGS: 1

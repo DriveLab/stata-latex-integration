@@ -1,0 +1,268 @@
+---------------------------------------------------------------------------------------------------
+      name:  fabiangunzinger
+       log:  /Users/fabiangunzinger/Library/Mobile Documents/com~apple~CloudDocs/fab/guides/stata-l
+> atex/analysis/log/stata-latex_2017.10.09.log
+  log type:  text
+ opened on:   9 Oct 2017, 14:10:39
+
+. timer clear
+
+. timer on 1
+
+. 
+. 
+. // Customise program
+. global datacleaningflag = 1                             // Clean data off/on
+
+. global tableflag = 1                                    // Produce table off/on
+
+. global figureflag = 1                                   // Produce figure off/on
+
+. 
+. 
+. 
+. ///////////////////
+> // Data cleaning //
+. ///////////////////
+> 
+. 
+. if $datacleaningflag {
+. 
+.         // A. Import raw data
+.         import excel using "$data_input_dir/maindata.xlsx", firstrow
+.         sum _all
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+     town_id |      6970    200.9802    21.36083        171        239
+turnout_to~l |      6970    464.9317    153.7471          0       1045
+turnout_male |      6970    253.3079    85.78139          0        597
+turnout_fe~e |      6970    211.6238    70.67793          0        483
+registered~l |      6970    973.8095     469.611       -999       1999
+-------------+--------------------------------------------------------
+regist~_male |      6970    531.9304    266.4036       -999       1194
+regist~emale |      6970    438.7261    222.1255       -999        991
+   treatment |      6970     .497274    .5000284          0          1
+. 
+. 
+.         // B. Create polling booth ID variable ('unique' breaks ties arbitrarily)
+.         egen booth_id = rank(-turnout_total), unique by(town_id)
+. 
+. 
+.         // C. Recode "-999" as missing values
+.         mvdecode registered_*, mv(-999=.)
+registered~l: 20 missing values generated
+regist~_male: 20 missing values generated
+regist~emale: 20 missing values generated
+.         sum _all
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+     town_id |      6970    200.9802    21.36083        171        239
+turnout_to~l |      6970    464.9317    153.7471          0       1045
+turnout_male |      6970    253.3079    85.78139          0        597
+turnout_fe~e |      6970    211.6238    70.67793          0        483
+registered~l |      6950    979.4866    458.1872       -998       1999
+-------------+--------------------------------------------------------
+regist~_male |      6950     536.336    253.7916       -998       1194
+regist~emale |      6950    442.8635    208.6035       -998        991
+   treatment |      6970     .497274    .5000284          0          1
+    booth_id |      6970    130.8987    76.85384          1        319
+. 
+. 
+.         // "-998" inadvertently entered for missing data too - recode also.
+.         mvdecode registered_*, mv(-998=.)
+registered~l: 2 missing values generated
+regist~_male: 2 missing values generated
+regist~emale: 2 missing values generated
+.         sum _all
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+     town_id |      6970    200.9802    21.36083        171        239
+turnout_to~l |      6970    464.9317    153.7471          0       1045
+turnout_male |      6970    253.3079    85.78139          0        597
+turnout_fe~e |      6970    211.6238    70.67793          0        483
+registered~l |      6948    980.0558    457.0227        204       1999
+-------------+--------------------------------------------------------
+regist~_male |      6948    536.7776    252.4892        106       1194
+regist~emale |      6948    443.2782    207.1958         88        991
+   treatment |      6970     .497274    .5000284          0          1
+    booth_id |      6970    130.8987    76.85384          1        319
+. 
+. 
+.         // D. Generate dummies for town_id (uses -dummieslab- from SSC.)
+.         dummieslab town_id
+note: town_id not labelled
+. 
+. 
+.         // E. Add town names (option 'keep(match master)' retains matched towns as well as unmatc
+> hed towns from the master dataset. Merge output shows that all towns from master were matched to 
+> a name.)
+.         preserve
+.                 import excel using "$data_input_dir/townnames.xlsx", clear firstrow
+.                 rename TownID town_id
+.                 rename TownName town_name
+.                 tempfile tempTownNames
+.                 save `tempTownNames', replace
+(note: file /var/folders/rb/spbqyz3s1w7d_9y2bfw34xfr0000gn/T//S_29794.000002 not found)
+file /var/folders/rb/spbqyz3s1w7d_9y2bfw34xfr0000gn/T//S_29794.000002 saved
+.         restore
+.         merge m:1 town_id using `tempTownNames', nogen keep(match master)
+
+    Result                           # of obs.
+    -----------------------------------------
+    not matched                             0
+    matched                             6,970  
+    -----------------------------------------
+. 
+. 
+.         // F. Label variables
+.         foreach v of varlist town_id* booth_id town_name {
+  2.                 label var `v' "ID variable"
+  3.         }
+. 
+.         foreach v of varlist turnout_* registered_* {
+  2.                 label var `v' "Electoral data"
+  3.         }
+.         
+.         foreach v of varlist treatment {
+  2.                 label var `v' "Intervention"
+  3.         }
+. 
+. 
+.         // G. Label values of treatment variable
+.         label define UntreatTreat 0 "Untreated" 1 "Treated"
+.         label values treatment UntreatTreat
+.         tab treatment
+
+Interventio |
+          n |      Freq.     Percent        Cum.
+------------+-----------------------------------
+  Untreated |      3,504       50.27       50.27
+    Treated |      3,466       49.73      100.00
+------------+-----------------------------------
+      Total |      6,970      100.00
+. 
+. 
+.         // Save data
+.         save "$data_output_dir/stata-test", replace
+(note: file /Users/fabiangunzinger/Library/Mobile Documents/com~apple~CloudDocs/fab/guides/stata-la
+> tex/analysis/data/output/stata-test.dta not found)
+file /Users/fabiangunzinger/Library/Mobile Documents/com~apple~CloudDocs/fab/guides/stata-latex/ana
+> lysis/data/output/stata-test.dta saved
+. 
+. }
+
+. 
+. 
+. 
+. /////////////////////////////
+> // Produce table for LaTeX //
+. /////////////////////////////
+> 
+. if $tableflag {
+. 
+.         use "$data_output_dir/stata-test", clear
+. 
+.         label var registered_total "Registered voters"
+. 
+.         quiet eststo reg1: reg turnout_total treatment i.town_id
+.         quiet sum turnout_total if treatment==0
+.         eststo reg1, addscalars(mean_untreated r(mean))
+(e(mean_untreated) = 461.254 added)
+. 
+.         quiet eststo reg2: reg turnout_total treatment i.town_id registered_total
+.         quiet sum turnout_total if treatment==0
+.         eststo reg2, addscalars(mean_untreated r(mean))
+(e(mean_untreated) = 461.254 added)
+. 
+.         loc footnote "The columns present results from regressing total turnout on an interventio
+> n dummy and different sets of control variables. The coefficient on the intervention variable is 
+> an estimate of the average treatment effect. Values in parenteses are t statistics. * denotes sig
+> nificance at 10 pct., ** at 5 pct., and *** at 1 pct. level."
+.         loc prehead "\begin{table}[h]\centering \def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi} \capti
+> on{Average treatment effect} \label{tab:results} \maxsizebox*{\textwidth}{\textheight}{ \begin{th
+> reeparttable} \begin{tabular}{lcc} \toprule"
+.         loc postfoot "\bottomrule \end{tabular} \begin{tablenotes}[flushleft] \footnotesize \item
+>  @note \end{tablenotes} \end{threeparttable} } \end{table}"
+.         
+.         esttab using "$output_dir/tab-results.tex", title(Average treatment effects) nomtitles la
+> bel indicate(Town fixed-effects = *.town_id) stats(mean_untreated N, labels("Mean turnout untreat
+> ed" "Observations")) note("`footnote'") prehead("`prehead'") postfoot("`postfoot'") replace
+(output written to /Users/fabiangunzinger/Library/Mobile Documents/com~apple~CloudDocs/fab/guides/s
+> tata-latex/analysis/output/tab-results.tex)
+. 
+. }
+
+. 
+. 
+.         
+. /////////////////////
+> // Produce figures //
+. /////////////////////
+> 
+. 
+. if $figureflag {
+. 
+.         use "$data_output_dir/stata-test", clear
+. 
+.         // Histograms of electoral variables
+.         local populations total male female
+.         foreach p of local populations {
+  2.                 twoway (hist turnout_`p', color(blue) title("Number of `p' individuals per vot
+> ing booth")) (hist registered_`p', fcolor(none) lcolor(red)), legend(order(1 "Turnout" 2 "Registe
+> red"))
+  3.                 graph export "$output_dir/fig-hist-`p'.pdf", replace
+  4.         }
+(file /Users/fabiangunzinger/Library/Mobile Documents/com~apple~CloudDocs/fab/guides/stata-latex/an
+> alysis/output/fig-hist-total.pdf written in PDF format)
+(file /Users/fabiangunzinger/Library/Mobile Documents/com~apple~CloudDocs/fab/guides/stata-latex/an
+> alysis/output/fig-hist-male.pdf written in PDF format)
+(file /Users/fabiangunzinger/Library/Mobile Documents/com~apple~CloudDocs/fab/guides/stata-latex/an
+> alysis/output/fig-hist-female.pdf written in PDF format)
+. 
+. 
+.         // Bar graph of female voteshare
+.         local populations total male female
+.         foreach pop of local populations {
+  2.                 gen voteshare_`pop' = turnout_`pop' / registered_`pop' * 100
+  3.         }
+(22 missing values generated)
+(22 missing values generated)
+(22 missing values generated)
+.         bysort treatment: sum voteshare_female
+
+---------------------------------------------------------------------------------------------------
+-> treatment = Untreated
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+votesh~emale |      3493    56.92625    28.30207          0        100
+
+---------------------------------------------------------------------------------------------------
+-> treatment = Treated
+
+    Variable |       Obs        Mean    Std. Dev.       Min        Max
+-------------+--------------------------------------------------------
+votesh~emale |      3455    58.31742    27.68832   .1154734        100
+
+. 
+.         graph bar voteshare_female, over(treatment) ytitle("Average female vote share")
+.         graph export "$output_dir/fig-bars.pdf", replace
+(file /Users/fabiangunzinger/Library/Mobile Documents/com~apple~CloudDocs/fab/guides/stata-latex/an
+> alysis/output/fig-bars.pdf written in PDF format)
+. 
+. }
+
+. 
+. 
+. 
+. //////////
+> /* Notes /
+> //////////
+> 
+
+end of do-file
+
+. exit, clear

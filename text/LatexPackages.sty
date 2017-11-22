@@ -1,0 +1,99 @@
+% ============================================================================
+% 
+%   packages 2.sty, Fabian Gunzinger
+%
+%   This file loads all basic packages required to compile latex.
+% 
+%   Version: 
+%   It does not call bib file. This is now called from oroginal file for better
+%   overview.
+%
+% ============================================================================
+
+
+% Basic packages
+\usepackage{
+    amssymb,
+    amsfonts,
+    amsmath,
+    bbm,
+    lscape,    
+    epstopdf,
+    enumerate,
+    endnotes,
+    graphicx,
+    latexsym,
+    morefloats,
+    setspace,
+    fancyhdr,
+    url,
+    float,
+    caption,
+    subcaption,
+    tabularx,
+    threeparttable,
+    dcolumn,
+    booktabs,
+    tikz,
+    xfrac,
+    xcolor
+}
+
+\usepackage[utf8, ansinew]{inputenc}    % required for umlaute
+\usepackage{csquotes}
+\usepackage[ngerman, english]{babel}    % required for umlaute
+\usepackage[T1]{fontenc}                % required for umlaute   
+\usepackage[section]{placeins}
+\usepackage{placeins}
+\usepackage{adjustbox}
+
+\usepackage[
+    colorlinks,
+    breaklinks,
+    bookmarks=false,
+    pdfstartview=Fit,  % for fitting entire page; FitW just fits width
+    pdfview=Fit,       % after traversing a hyperlink
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black,
+    hyperfootnotes=false
+]{hyperref}
+
+\usepackage[figure,table]{hypcap}       % Correct a problem with hyperref
+
+
+% Bibliography style settings.
+\usepackage[
+	backend=biber,
+	style=authoryear,
+	maxcitenames=2,
+    maxbibnames=30,
+	isbn=false,
+	eprint=false,
+	url=true
+]{biblatex} 
+\renewcommand*{\multicitedelim}{,\space}
+\DeclareFieldFormat[techreport,report,unpublished]{title}{\mkbibquote{#1}}
+\AtEveryBibitem{% Clean up the bibtex rather than editing it
+ \clearfield{date}
+ \clearfield{eprint}
+ \clearfield{isbn}
+ \clearfield{issn}
+ \clearfield{month}
+ \clearfield{note}
+ \clearfield{language}
+ \ifentrytype{article}{
+  \clearfield{url}
+  \clearfield{doi}
+ }
+}
+
+
+% Command shortcuts
+\newcommand{\citet}[1]{\textcite{#1}}
+\newcommand{\citep}[1]{\parencite{#1}}
+\newcommand{\citef}[1]{\footcite{#1}}
+\newcommand{\ed}[1]{\color{red}{#1}}
+\newcommand{\gap}{{\color{red}...\#...}}
+
+
